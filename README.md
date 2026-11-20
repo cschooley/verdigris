@@ -2,7 +2,7 @@
 
 The design system for the cschooley security toolkit: spall, Kudzu, scurf, taphttp, flux.
 
-Rust-dark, verdigris-live. Built for eight-hour sessions and for looking like you know exactly what you're doing.
+Rust-dark (or blued, or light), verdigris-live. Built for eight-hour sessions and for looking like you know exactly what you're doing.
 
 - [`GUIDE.md`](GUIDE.md): principles, color roles, type, density, icon rules
 - [`tokens/`](tokens/): design tokens (`tokens.json` is the source of truth, `tokens.css` for direct use)
@@ -12,6 +12,15 @@ Rust-dark, verdigris-live. Built for eight-hour sessions and for looking like yo
 ## Using it
 
 Until there's a package, copy `tokens/tokens.css` into your tool and use the `--vg-*` variables. Never hard-code a hex value that exists as a token.
+
+Themes: `rust` (default), `rust-light`, `blued`, `blued-light`. Set `data-theme` on `<html>`.
+
+## Building
+
+```sh
+python3 build/tokens.py     # contrast check + generate tokens/tokens.css
+python3 build/mockups.py    # rebuild self-contained mockups
+```
 
 ## License
 

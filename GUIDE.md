@@ -22,6 +22,24 @@ Two halves, both required:
 7. **Terse copy.** No exclamation points, no cheerful empty states, no "Oops!". Say what is true and what to do: `No traffic. Point a client at 127.0.0.1:8080.`
 8. **Hardware metaphors, lightly.** Status LEDs, a level meter for request rate. A nod to gear, not a skeuomorphic toy.
 
+## Themes
+
+Two metals, each in dark and light. Same roles, same meanings, different alloy.
+
+| Theme | `data-theme` | Feel |
+|---|---|---|
+| **Rust** (default) | none, or `rust` | Warm. Oxidized iron. |
+| Rust Light | `rust-light` | Warm paper, iron ink. |
+| **Blued** | `blued` | Cool. Gun-blued steel. |
+| Blued Light | `blued-light` | Cool paper, steel ink. |
+
+Set the attribute on `<html>`. Rules that hold in every theme:
+
+- **Rust stays the brand.** `--vg-accent-rust` is the identity color in all four themes, including Blued (orange on steel is the complementary pairing).
+- **Verdigris stays live-only.** Light themes use a darker verdigris for contrast; the meaning doesn't change.
+- **Status and method colors keep their hue family** across themes, darkened for light backgrounds, so a 4xx is always amber.
+- **Dark is the default.** Light themes exist for bright rooms and screenshots in docs, not as the primary experience.
+
 ## Color roles
 
 | Role | Token | Use |
@@ -46,7 +64,7 @@ Default table row height is 26px (`--vg-row-dense`). These are expert tools; den
 
 ## Contrast
 
-All text tokens meet WCAG AA (4.5:1) on `bg.base` and `bg.surface`. `text.tertiary` drops to 4.49 on `bg.raised`; don't use it for body text there. Recheck contrast whenever a token value changes.
+All text tokens meet WCAG AA (4.5:1) on `bg-base` and `bg-surface` in every theme. This is enforced: `build/tokens.py` refuses to write `tokens.css` if any required pair fails. On `bg-raised` a few tokens dip just under 4.5 (reported as `(low)`); don't use `text-tertiary` or `status-none` for body text on raised surfaces.
 
 ## Icons
 

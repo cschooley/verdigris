@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>spall · traffic (verdigris mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*TOKENS*/
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--vg-bg-base); color: var(--vg-text-primary);
+  font: var(--vg-text-md)/1.4 var(--vg-font-sans);
+  display: grid; grid-template-rows: 44px 1fr 24px; overflow: hidden;
+}
+:focus-visible { outline: 1px solid var(--vg-accent-rust); outline-offset: 1px; }
+
+/* top bar */
+.bar { display: flex; align-items: center; gap: var(--vg-space-5); padding: 0 var(--vg-space-5);
+  border-bottom: 1px solid var(--vg-border-subtle); background: var(--vg-bg-surface); }
+.brand { display: flex; align-items: center; gap: var(--vg-space-3); font-weight: 600; letter-spacing: .02em; }
+.brand svg { color: var(--vg-accent-rust); --vg-icon-accent: var(--vg-accent-rust); }
+.brand small { color: var(--vg-text-tertiary); font: 500 var(--vg-text-xs) var(--vg-font-mono); letter-spacing: .08em; }
+.live { display: flex; align-items: center; gap: var(--vg-space-3); font: 500 var(--vg-text-xs) var(--vg-font-mono);
+  color: var(--vg-accent-verdigris); letter-spacing: .12em; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--vg-accent-verdigris);
+  box-shadow: 0 0 0 0 var(--vg-accent-verdigris-glow); animation: pulse var(--vg-motion-pulse) var(--vg-easing) infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--vg-accent-verdigris-glow); } 70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; box-shadow: 0 0 6px var(--vg-accent-verdigris-glow); } }
+
+.meter { display: flex; align-items: center; gap: var(--vg-space-3); font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); }
+.meter .segs { display: flex; gap: 2px; }
+.meter .segs i { width: 4px; height: 12px; background: var(--vg-border-subtle); border-radius: 1px; }
+.meter .segs i.on { background: var(--vg-text-secondary); }
+.meter b { color: var(--vg-text-primary); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.filter { flex: 1; max-width: 420px; height: 26px; background: var(--vg-bg-sunken); border: 1px solid var(--vg-border-subtle);
+  border-radius: var(--vg-radius-sm); color: var(--vg-text-primary); font: var(--vg-text-sm) var(--vg-font-mono); padding: 0 var(--vg-space-3); }
+.filter::placeholder { color: var(--vg-text-tertiary); }
+.spacer { flex: 1; }
+
+/* theme switcher */
+.themes { display: flex; border: 1px solid var(--vg-border-subtle); border-radius: var(--vg-radius-sm); overflow: hidden; }
+.themes button { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 var(--vg-space-4); background: none; border: 0;
+  border-right: 1px solid var(--vg-border-subtle); color: var(--vg-text-secondary); font: 500 var(--vg-text-xs) var(--vg-font-mono);
+  letter-spacing: .06em; cursor: pointer; transition: background var(--vg-motion-fast) var(--vg-easing), color var(--vg-motion-fast) var(--vg-easing); }
+.themes button:last-child { border-right: 0; }
+.themes button:hover { color: var(--vg-text-primary); background: var(--vg-bg-raised); }
+.themes button[aria-pressed="true"] { color: var(--vg-text-primary); background: var(--vg-bg-raised); box-shadow: inset 0 -2px 0 var(--vg-accent-rust); }
+.sw { width: 8px; height: 8px; border-radius: 1px; border: 1px solid var(--vg-border-strong); }
+.sw-rust { background: #6B3A22; } .sw-blued { background: #26384F; }
+body.ready { transition: background var(--vg-motion-base) var(--vg-easing), color var(--vg-motion-base) var(--vg-easing); }
+
+/* launcher */
+.launch { position: relative; }
+.launch > button { background: none; border: 1px solid transparent; border-radius: var(--vg-radius-sm); width: 30px; height: 30px;
+  display: grid; place-items: center; color: var(--vg-text-secondary); cursor: pointer; }
+.launch > button:hover, .launch.open > button { border-color: var(--vg-border-strong); color: var(--vg-text-primary); }
+.grid9 { display: grid; grid-template-columns: repeat(3, 3px); gap: 3px; }
+.grid9 i { width: 3px; height: 3px; background: currentColor; border-radius: 1px; }
+.panel { display: none; position: absolute; right: 0; top: 36px; width: 264px; padding: var(--vg-space-3);
+  background: var(--vg-bg-raised); border: 1px solid var(--vg-border-strong); border-radius: var(--vg-radius-md);
+  grid-template-columns: repeat(3, 1fr); gap: var(--vg-space-2); z-index: 10; }
+.launch.open .panel { display: grid; }
+.tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--vg-space-2); padding: var(--vg-space-4) 0 var(--vg-space-3);
+  border-radius: var(--vg-radius-sm); color: var(--vg-text-secondary); font: var(--vg-text-xs) var(--vg-font-mono); text-decoration: none; }
+.tile:hover { background: var(--vg-bg-surface); color: var(--vg-text-primary); }
+.tile.here { color: var(--vg-text-primary); }
+.tile .led { position: absolute; top: 6px; right: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--vg-border-strong); }
+.tile .led.up { background: var(--vg-accent-verdigris); box-shadow: 0 0 5px var(--vg-accent-verdigris-glow); }
+.tile.headless { cursor: default; }
+.tile.headless:hover { background: none; color: var(--vg-text-secondary); }
+
+/* main split */
+main { display: grid; grid-template-columns: 1fr 440px; min-height: 0; }
+.tablewrap { overflow: auto; border-right: 1px solid var(--vg-border-subtle); }
+table { width: 100%; border-collapse: collapse; font: var(--vg-text-md) var(--vg-font-mono); font-variant-numeric: tabular-nums; }
+thead th { position: sticky; top: 0; background: var(--vg-bg-surface); color: var(--vg-text-secondary); font: 500 var(--vg-text-xs) var(--vg-font-sans);
+  letter-spacing: .08em; text-transform: uppercase; text-align: left; height: 28px; padding: 0 var(--vg-space-4); border-bottom: 1px solid var(--vg-border-subtle); }
+tbody tr { height: var(--vg-row-dense); cursor: pointer; }
+tbody tr:hover { background: var(--vg-bg-surface); }
+tbody tr.sel { background: var(--vg-bg-raised); box-shadow: inset 2px 0 0 var(--vg-accent-rust); }
+td { padding: 0 var(--vg-space-4); border-bottom: 1px solid var(--vg-bg-surface); white-space: nowrap; }
+td.t, td.dur { color: var(--vg-text-tertiary); }
+td.dur, th.dur { text-align: right; }
+td.host { color: var(--vg-text-secondary); }
+td.path { overflow: hidden; text-overflow: ellipsis; max-width: 380px; }
+tr.new td { animation: arrive 900ms var(--vg-easing); }
+@keyframes arrive { from { background: color-mix(in srgb, var(--vg-accent-verdigris) 10%, transparent); } to { background: transparent; } }
+.m { font-weight: 500; }
+.m-GET { color: var(--vg-method-get); } .m-POST { color: var(--vg-method-post); } .m-PUT { color: var(--vg-method-put); }
+.m-PATCH { color: var(--vg-method-patch); } .m-DELETE { color: var(--vg-method-delete); } .m-OTHER { color: var(--vg-method-other); }
+.s2 { color: var(--vg-status-2xx); } .s3 { color: var(--vg-status-3xx); } .s4 { color: var(--vg-status-4xx); } .s5 { color: var(--vg-status-5xx); }
+
+/* detail */
+.detail { overflow: auto; background: var(--vg-bg-base); }
+.detail header { padding: var(--vg-space-4) var(--vg-space-5); border-bottom: 1px solid var(--vg-border-subtle); }
+.detail h2 { font: 500 var(--vg-text-md) var(--vg-font-mono); word-break: break-all; }
+.detail .meta { margin-top: var(--vg-space-2); color: var(--vg-text-tertiary); font: var(--vg-text-xs) var(--vg-font-mono); display: flex; gap: var(--vg-space-4); }
+.tabs { display: flex; border-bottom: 1px solid var(--vg-border-subtle); padding: 0 var(--vg-space-5); }
+.tabs button { background: none; border: 0; color: var(--vg-text-secondary); font: 500 var(--vg-text-xs) var(--vg-font-sans); letter-spacing: .08em;
+  text-transform: uppercase; height: 32px; padding: 0 var(--vg-space-4); cursor: pointer; box-shadow: inset 0 -2px 0 transparent; }
+.tabs button.on { color: var(--vg-text-primary); box-shadow: inset 0 -2px 0 var(--vg-accent-rust); }
+.sect { padding: var(--vg-space-4) var(--vg-space-5); }
+.sect h3 { font: 500 var(--vg-text-xs) var(--vg-font-sans); color: var(--vg-text-secondary); letter-spacing: .08em; text-transform: uppercase; margin-bottom: var(--vg-space-3); }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px var(--vg-space-4); font: var(--vg-text-sm) var(--vg-font-mono); }
+dt { color: var(--vg-text-secondary); } dd { word-break: break-all; }
+dd.secret { color: var(--vg-status-4xx); }
+pre { background: var(--vg-bg-sunken); border: 1px solid var(--vg-border-subtle); border-radius: var(--vg-radius-sm); padding: var(--vg-space-4);
+  font: var(--vg-text-sm)/1.55 var(--vg-font-mono); color: var(--vg-text-primary); overflow: auto; }
+.k { color: var(--vg-text-secondary); } .str { color: var(--vg-method-get); } .num { color: var(--vg-status-3xx); }
+
+/* status bar */
+footer { display: flex; align-items: center; gap: var(--vg-space-6); padding: 0 var(--vg-space-5); background: var(--vg-bg-surface);
+  border-top: 1px solid var(--vg-border-subtle); color: var(--vg-text-tertiary); font: var(--vg-text-xs) var(--vg-font-mono); }
+footer .ok { color: var(--vg-accent-verdigris); }
+kbd { font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-secondary); border: 1px solid var(--vg-border-strong); border-radius: var(--vg-radius-sm); padding: 0 4px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand">/*ICON:spall*/ spall <small>M0</small></div>
+  <div class="live"><span class="dot"></span>LIVE</div>
+  <div class="meter"><span class="segs" id="segs"></span><b id="rate">0.0</b> req/s</div>
+  <input class="filter" placeholder="filter  host:example.com  status:4xx  method:POST" aria-label="Filter traffic">
+  <div class="spacer"></div>
+  <div class="themes" role="group" aria-label="Theme">
+    <button data-metal="rust" aria-pressed="true"><span class="sw sw-rust"></span>Rust</button>
+    <button data-metal="blued" aria-pressed="false"><span class="sw sw-blued"></span>Blued</button>
+    <button id="mode" aria-label="Toggle light or dark" title="Toggle light/dark (t)"><span id="modeIcon">◐</span><span id="modeLabel">Dark</span></button>
+  </div>
+  <div class="launch" id="launch">
+    <button aria-label="Switch tool" onclick="document.getElementById('launch').classList.toggle('open')"><span class="grid9"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
+    <div class="panel">
+      <a class="tile here" href="#"><span class="led up"></span>/*ICON:spall*/spall</a>
+      <a class="tile" href="#"><span class="led up"></span>/*ICON:kudzu*/kudzu</a>
+      <a class="tile" href="#"><span class="led"></span>/*ICON:scurf*/scurf</a>
+      <span class="tile headless" title="headless: status only"><span class="led up"></span>/*ICON:taphttp*/taphttp</span>
+      <span class="tile headless" title="library: no service"><span class="led"></span>/*ICON:flux*/flux</span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Time</th><th>Method</th><th>Host</th><th>Path</th><th>Status</th><th class="dur">ms</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <aside class="detail">
+    <header>
+      <h2><span class="m m-POST">POST</span> https://shop.example.test/api/v2/session</h2>
+      <div class="meta"><span>id 01JD8Q3K…7F2</span><span class="s4">401 Unauthorized</span><span>184 ms</span><span>14:31:07.442</span></div>
+    </header>
+    <div class="tabs"><button class="on">Request</button><button>Response</button><button>Raw</button></div>
+    <div class="sect">
+      <h3>Headers</h3>
+      <dl>
+        <dt>host</dt><dd>shop.example.test</dd>
+        <dt>content-type</dt><dd>application/json</dd>
+        <dt>authorization</dt><dd class="secret">Bearer eyJhbGciOiJIUzI1NiIs…</dd>
+        <dt>cookie</dt><dd class="secret">sid=8f3a…; csrf=11c0…</dd>
+        <dt>user-agent</dt><dd>curl/8.9.1</dd>
+      </dl>
+    </div>
+    <div class="sect">
+      <h3>Body</h3>
+<pre>{
+  <span class="k">"username"</span>: <span class="str">"admin"</span>,
+  <span class="k">"password"</span>: <span class="str">"hunter2"</span>,
+  <span class="k">"remember"</span>: <span class="num">true</span>
+}</pre>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <span>taphttp <span class="ok">● connected</span> 127.0.0.1:8080</span>
+  <span id="count">0 exchanges</span>
+  <span class="spacer"></span>
+  <span id="themeName">theme rust</span>
+  <span><kbd>t</kbd> light/dark</span>
+  <span><kbd>/</kbd> filter</span><span><kbd>j</kbd><kbd>k</kbd> move</span><span><kbd>⏎</kbd> detail</span>
+</footer>
+
+<script>
+const sample = [
+  ["GET","example.com","/","200",42],["GET","shop.example.test","/static/app.3f9c.js","200",18],
+  ["POST","shop.example.test","/api/v2/session","401",184],["GET","shop.example.test","/api/v2/products?page=2","200",96],
+  ["OPTIONS","api.example.test","/v1/orders","204",9],["PUT","api.example.test","/v1/cart/8841","200",131],
+  ["GET","shop.example.test","/account","302",27],["DELETE","api.example.test","/v1/cart/8841/items/3","204",64],
+  ["PATCH","api.example.test","/v1/users/me","403",58],["GET","cdn.example.test","/img/hero@2x.webp","304",12],
+  ["POST","api.example.test","/v1/graphql","500",911],["GET","shop.example.test","/api/v2/search?q=%27%20OR%201%3D1--","200",203],
+];
+const rows = document.getElementById('rows');
+let n = 0, t = Date.now() - 60000, recent = [];
+function mcls(m){ return ["GET","POST","PUT","PATCH","DELETE"].includes(m) ? m : "OTHER"; }
+function add(e, fresh){
+  const [m,h,p,s,d] = e; t += Math.floor(400 + Math.random()*2200);
+  const ts = new Date(t).toTimeString().slice(0,8) + "." + String(t%1000).padStart(3,"0");
+  const tr = document.createElement('tr'); if (fresh) tr.className = 'new';
+  tr.innerHTML = `<td class="t">${ts}</td><td class="m m-${mcls(m)}">${m}</td><td class="host">${h}</td><td class="path">${p}</td><td class="s${s[0]}">${s}</td><td class="dur">${d}</td>`;
+  tr.onclick = () => { document.querySelectorAll('tr.sel').forEach(r=>r.classList.remove('sel')); tr.classList.add('sel'); };
+  if (s === "401" && !document.querySelector('tr.sel')) tr.classList.add('sel');
+  rows.appendChild(tr); n++; document.getElementById('count').textContent = n + " exchanges";
+  recent.push(Date.now());
+}
+sample.forEach(e => add(e, false));
+const segs = document.getElementById('segs'); for (let i=0;i<10;i++) segs.appendChild(document.createElement('i'));
+function tick(){
+  add(sample[Math.floor(Math.random()*sample.length)], true);
+  const tw = document.querySelector('.tablewrap'); tw.scrollTop = tw.scrollHeight;
+  setTimeout(tick, 700 + Math.random()*1800);
+}
+setInterval(() => {
+  const now = Date.now(); recent = recent.filter(x => now - x < 5000);
+  const r = recent.length/5; document.getElementById('rate').textContent = r.toFixed(1);
+  [...segs.children].forEach((s,i) => s.classList.toggle('on', i < Math.round(r*2.5)));
+}, 500);
+setTimeout(tick, 1200);
+document.addEventListener('click', e => { const l = document.getElementById('launch'); if (!l.contains(e.target)) l.classList.remove('open'); });
+document.getElementById('launch').classList.add('open');
+
+// theme: metal (rust | blued) x mode (dark | light) -> data-theme
+const state = { metal: 'rust', light: false };
+try { Object.assign(state, JSON.parse(localStorage.getItem('vg-theme') || '{}')); } catch (e) { /* storage unavailable: in-memory only */ }
+function applyTheme() {
+  const name = state.metal + (state.light ? '-light' : '');
+  if (name === 'rust') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', name);
+  document.querySelectorAll('[data-metal]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.metal === state.metal)));
+  document.getElementById('modeLabel').textContent = state.light ? 'Light' : 'Dark';
+  document.getElementById('modeIcon').textContent = state.light ? '○' : '◐';
+  document.getElementById('themeName').textContent = 'theme ' + name;
+  try { localStorage.setItem('vg-theme', JSON.stringify(state)); } catch (e) { /* ignore */ }
+}
+document.querySelectorAll('[data-metal]').forEach(b => b.onclick = () => { state.metal = b.dataset.metal; applyTheme(); });
+document.getElementById('mode').onclick = () => { state.light = !state.light; applyTheme(); };
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 't') { state.light = !state.light; applyTheme(); }
+});
+// ?theme=blued-light for screenshots and links
+const q = new URLSearchParams(location.search).get('theme');
+if (q) { state.metal = q.startsWith('blued') ? 'blued' : 'rust'; state.light = q.endsWith('-light'); }
+applyTheme();
+requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('ready')));
+</script>
+</body>
+</html>
