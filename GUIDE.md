@@ -46,9 +46,13 @@ Set the attribute on `<html>`. Rules that hold in every theme:
 |---|---|---|
 | Live / active | `--vg-accent-verdigris` | Live stream dot, connected tool LED, active capture |
 | Brand / action / focus | `--vg-accent-rust` | Primary button, focus ring, wordmark |
+| Needs your action | `--vg-accent-rust` | Approval requests, triage badges, candidate state |
+| Stop / halted | `--vg-control-stop` | Agent e-stop and halted state ONLY. Not for errors or 5xx |
 | HTTP status class | `--vg-status-*` | Status code text in traffic views |
 | HTTP method | `--vg-method-*` | Method label (808-style category color) |
 | Severity | TBD (spall M3) | Do not reuse status colors |
+
+Attribution uses glyphs, not color: `◆ agent`, `● you`, `◇ scurf`. Every agent-originated exchange, candidate and message carries the ◆.
 
 Color-blind safety: never rely on color alone. Status codes are always shown as numbers; methods always as text. Color reinforces, it does not replace.
 

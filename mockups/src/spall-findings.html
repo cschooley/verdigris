@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--PARTIAL:head.html-->
+<title>spall · findings (verdigris mockup)</title>
+<style>
+/*PARTIAL:base.css*/
+main { display: grid; grid-template-columns: minmax(0, 1fr) 520px; grid-template-rows: 40px minmax(0, 1fr); }
+.qtabs { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--vg-space-2); padding: 0 var(--vg-space-5); border-bottom: 1px solid var(--vg-border-subtle); }
+.qtabs .tabs { border: 0; padding: 0; height: 100%; }
+.qtabs .tabs button { height: 40px; }
+.queue { overflow: auto; }
+td.title { font-family: var(--vg-font-sans); color: var(--vg-text-primary); }
+td.sev { font-family: var(--vg-font-sans); color: var(--vg-text-secondary); }
+tr.decided td { opacity: .5; }
+tr.decided td.state { opacity: 1; }
+.state .chip { height: 18px; }
+.state .chip.waiting { border-color: transparent; padding-left: 0; }
+.chip.ok { color: var(--vg-text-primary); }
+.inbox-zero { display: none; padding: var(--vg-space-7); color: var(--vg-text-secondary); font: var(--vg-text-md) var(--vg-font-mono); }
+.diff { display: grid; grid-template-columns: 1fr 1fr; gap: var(--vg-space-3); }
+.diff pre { margin: 0; }
+.diff .lbl { font: 500 var(--vg-text-xs) var(--vg-font-sans); color: var(--vg-text-tertiary); letter-spacing: .08em; text-transform: uppercase; margin-bottom: var(--vg-space-2); }
+.same { box-shadow: inset 0 -1px 0 var(--vg-status-4xx); color: var(--vg-status-4xx); }
+.ev { width: 100%; font-size: var(--vg-text-sm); }
+.ev td { border-bottom: 1px solid var(--vg-bg-surface); }
+.red { color: var(--vg-text-tertiary); }
+.dispose { position: sticky; bottom: 0; background: var(--vg-bg-surface); border-top: 1px solid var(--vg-border-strong); padding: var(--vg-space-4) var(--vg-space-5); }
+.dispose textarea { width: 100%; height: 52px; resize: none; background: var(--vg-bg-sunken); border: 1px solid var(--vg-border-subtle); border-radius: var(--vg-radius-sm);
+  color: var(--vg-text-primary); font: var(--vg-text-sm)/1.45 var(--vg-font-sans); padding: var(--vg-space-3); margin-bottom: var(--vg-space-3); }
+.dispose textarea.need { border-color: var(--vg-accent-rust); }
+.dispose textarea::placeholder { color: var(--vg-text-tertiary); }
+.dispose .actions { align-items: center; }
+.src { display: flex; flex-wrap: wrap; gap: var(--vg-space-2) var(--vg-space-4); }
+</style>
+</head>
+<body data-view="findings">
+<!--PARTIAL:topbar.html-->
+<!--PARTIAL:rail.html-->
+<main>
+  <div class="qtabs">
+    <div class="tabs">
+      <button class="on">Candidates<span class="count" id="nCand">6</span></button>
+      <button>Confirmed<span class="count" id="nConf">3</span></button>
+      <button>Rejected<span class="count" id="nRej">4</span></button>
+      <button>All</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="btn">Export flux <kbd>e</kbd></button>
+  </div>
+
+  <div class="queue">
+    <table>
+      <thead><tr><th>Sev</th><th>Finding</th><th>Endpoint</th><th>Source</th><th>Age</th><th>State</th></tr></thead>
+      <tbody id="q"></tbody>
+    </table>
+    <div class="inbox-zero" id="zero">Inbox zero. Nothing left to triage.</div>
+  </div>
+
+  <aside class="detail" id="detail">
+    <header>
+      <h2 class="title" id="dTitle"></h2>
+      <div class="meta" id="dMeta"></div>
+    </header>
+    <div class="sect">
+      <h3>Source</h3>
+      <div class="src" id="dSrc"></div>
+    </div>
+    <div class="sect">
+      <h3>What it is</h3>
+      <p id="dDesc"></p>
+    </div>
+    <div class="sect" id="dDiffSect">
+      <h3>Replay diff</h3>
+      <div class="diff">
+        <div><div class="lbl">Before login</div><pre>Set-Cookie: <span class="same">sid=8f3a91c2…</span></pre></div>
+        <div><div class="lbl">After login (user A)</div><pre>Set-Cookie: <span class="same">sid=8f3a91c2…</span></pre></div>
+      </div>
+    </div>
+    <div class="sect">
+      <h3>Evidence <span class="who">· links to Traffic</span></h3>
+      <table class="ev"><tbody id="dEv"></tbody></table>
+    </div>
+    <div class="sect">
+      <h3>Export preview <span class="who">· after flux redaction</span></h3>
+<pre id="dExport"></pre>
+    </div>
+    <div class="dispose">
+      <textarea id="why" placeholder="Justification (required to reject or mark duplicate)"></textarea>
+      <div class="actions">
+        <button class="btn primary" data-act="confirmed">Confirm <kbd>c</kbd></button>
+        <button class="btn" data-act="rejected">Reject <kbd>r</kbd></button>
+        <button class="btn" data-act="duplicate">Duplicate <kbd>d</kbd></button>
+        <span class="spacer"></span>
+        <span class="who"><kbd>j</kbd><kbd>k</kbd> next/prev</span>
+      </div>
+    </div>
+  </aside>
+</main>
+<footer>
+  <span>taphttp <span class="ok">● connected</span></span>
+  <span id="left">6 to triage</span>
+  <span class="spacer"></span>
+  <span id="themeName">theme rust</span>
+  <span><kbd>t</kbd> light/dark</span><span><kbd>1</kbd>–<kbd>5</kbd> views</span><span><kbd>c</kbd><kbd>r</kbd><kbd>d</kbd> decide</span>
+</footer>
+<script>
+const F = [
+  { sev: "High", title: "Session ID not rotated at login", m: "POST", ep: "/api/v2/session", age: "4m", cwe: "CWE-384",
+    src: ['<span class="who agent">agent · T-3 · confidence 72</span>', '<span class="who scurf">scurf hypothesis · src/auth/session.py:88</span>'],
+    desc: "The sid cookie issued before authentication stays the same after a successful login. An attacker who can plant a sid in a victim's browser inherits the victim's session once they log in. Confirmed with two accounts.",
+    diff: true,
+    ev: [["01JD8Q3K…7F2","POST","/api/v2/session","200"],["01JD8Q41…A10","GET","/api/v2/me","200"],["01JD8Q5C…3B9","POST","/api/v2/session","200"]] },
+  { sev: "High", title: "Cart items readable across users", m: "GET", ep: "/v1/cart/{id}", age: "9m", cwe: "CWE-639",
+    src: ['<span class="who agent">agent · T-4 · confidence 81</span>'],
+    desc: "Changing the cart id in the path returns another user's cart contents with no ownership check. Tested with ids belonging to two different accounts.",
+    ev: [["01JD8R02…C44","GET","/v1/cart/8841","200"],["01JD8R0F…9D1","GET","/v1/cart/8842","200"]] },
+  { sev: "High", title: "SQL error reflected in search", m: "GET", ep: "/api/v2/search", age: "22m", cwe: "CWE-89",
+    src: ['<span class="who you">you · flagged from Traffic</span>'],
+    desc: "A single quote in q returns a database error message in the response body, suggesting the parameter reaches a SQL query unescaped. Not yet exploited; candidate for an agent task.",
+    ev: [["01JD8N7A…E02","GET","/api/v2/search?q='","500"]] },
+  { sev: "Med", title: "Stack trace in 500 response", m: "POST", ep: "/v1/graphql", age: "31m", cwe: "CWE-209",
+    src: ['<span class="who you">you · flagged from Traffic</span>'],
+    desc: "Malformed GraphQL input returns a full server stack trace including framework versions and file paths.",
+    ev: [["01JD8M2B…11F","POST","/v1/graphql","500"]] },
+  { sev: "Med", title: "CSP allows 'unsafe-inline' scripts", m: "GET", ep: "/", age: "1h", cwe: "CWE-693",
+    src: ['<span class="who agent">agent · T-1 · confidence 95</span>'],
+    desc: "The Content-Security-Policy header permits inline scripts, removing most of CSP's protection against XSS.",
+    ev: [["01JD8J9Q…5C0","GET","/","200"]] },
+  { sev: "Low", title: "HSTS header missing", m: "GET", ep: "/", age: "1h", cwe: "CWE-319",
+    src: ['<span class="who agent">agent · T-1 · confidence 98</span>'],
+    desc: "shop.example.test does not send Strict-Transport-Security, so first visits can be downgraded to HTTP.",
+    ev: [["01JD8J9Q…5C0","GET","/","200"]] },
+];
+const mcls = m => ["GET","POST","PUT","PATCH","DELETE"].includes(m) ? m : "OTHER";
+const q = document.getElementById('q');
+let sel = 0, conf = 3, rej = 4;
+F.forEach((f, i) => {
+  f.state = 'candidate';
+  const tr = document.createElement('tr'); tr.id = 'f' + i;
+  tr.innerHTML = `<td class="sev">${f.sev}</td><td class="title">${f.title}</td><td><span class="m m-${mcls(f.m)}">${f.m}</span> ${f.ep}</td><td>${f.src[0]}</td><td class="t">${f.age}</td><td class="state"><span class="chip waiting">Candidate</span></td>`;
+  tr.onclick = () => select(i);
+  q.appendChild(tr);
+});
+function exportPreview(f) {
+  const e = f.ev[0];
+  return `{
+  <span class="k">"ruleId"</span>: <span class="str">"${f.cwe}"</span>,
+  <span class="k">"message"</span>: { <span class="k">"text"</span>: <span class="str">"${f.title}"</span> },
+  <span class="k">"fingerprints"</span>: { <span class="k">"flux/dast/v1"</span>: <span class="str">"a91f…03c2"</span> },
+  <span class="k">"webRequest"</span>: {
+    <span class="k">"method"</span>: <span class="str">"${e[1]}"</span>, <span class="k">"target"</span>: <span class="str">"${e[2]}"</span>,
+    <span class="k">"headers"</span>: {
+      <span class="k">"Cookie"</span>: <span class="red">"[REDACTED:session]"</span>,
+      <span class="k">"Authorization"</span>: <span class="red">"[REDACTED:bearer]"</span>
+    }
+  },
+  <span class="k">"properties"</span>: { <span class="k">"flux/redacted"</span>: <span class="lit">true</span>, <span class="k">"flux/replayIds"</span>: [${f.ev.length} ids] }
+}`;
+}
+function select(i) {
+  if (i < 0 || i >= F.length) return;
+  sel = i;
+  document.querySelectorAll('#q tr').forEach(r => r.classList.remove('sel'));
+  document.getElementById('f' + i).classList.add('sel');
+  const f = F[i];
+  document.getElementById('dTitle').textContent = f.title;
+  document.getElementById('dMeta').innerHTML = `<span>${f.sev}</span><span><span class="m m-${mcls(f.m)}">${f.m}</span> ${f.ep}</span><span>${f.cwe}</span><span>${f.age} ago</span>`;
+  document.getElementById('dSrc').innerHTML = f.src.join('');
+  document.getElementById('dDesc').textContent = f.desc;
+  document.getElementById('dDiffSect').style.display = f.diff ? '' : 'none';
+  document.getElementById('dEv').innerHTML = f.ev.map(e => `<tr><td class="t">${e[0]}</td><td class="m m-${mcls(e[1])}">${e[1]}</td><td>${e[2]}</td><td class="s${e[3][0]}">${e[3]}</td></tr>`).join('');
+  document.getElementById('dExport').innerHTML = exportPreview(f);
+  document.getElementById('why').value = '';
+  document.getElementById('why').classList.remove('need');
+}
+function decide(state) {
+  const f = F[sel]; if (f.state !== 'candidate') return;
+  const why = document.getElementById('why');
+  if (state !== 'confirmed' && !why.value.trim()) { why.classList.add('need'); why.focus(); return; }
+  f.state = state;
+  const row = document.getElementById('f' + sel); row.classList.add('decided');
+  const label = { confirmed: 'Confirmed', rejected: 'Rejected', duplicate: 'Duplicate' }[state];
+  row.querySelector('.state').innerHTML = `<span class="chip ok">${label}</span>`;
+  if (state === 'confirmed') conf++; else rej++;
+  const left = F.filter(x => x.state === 'candidate').length;
+  document.getElementById('nCand').textContent = left; document.getElementById('nConf').textContent = conf; document.getElementById('nRej').textContent = rej;
+  document.getElementById('left').textContent = left + ' to triage';
+  const badge = document.getElementById('findBadge'); badge.textContent = left; badge.style.display = left ? '' : 'none';
+  const next = F.findIndex((x, j) => j > sel && x.state === 'candidate');
+  const any = F.findIndex(x => x.state === 'candidate');
+  if (next >= 0) select(next); else if (any >= 0) select(any);
+  else { document.getElementById('zero').style.display = 'block'; }
+}
+document.querySelectorAll('[data-act]').forEach(b => b.onclick = () => decide(b.dataset.act));
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); decide(e.target.dataset.pending || 'rejected'); }
+    if (e.key === 'Escape') e.target.blur();
+    return;
+  }
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'j') select(Math.min(F.length - 1, sel + 1));
+  if (e.key === 'k') select(Math.max(0, sel - 1));
+  if (e.key === 'c') decide('confirmed');
+  if (e.key === 'r' || e.key === 'd') {
+    const st = e.key === 'r' ? 'rejected' : 'duplicate';
+    document.getElementById('why').dataset.pending = st;
+    e.preventDefault(); decide(st);
+  }
+});
+select(0);
+</script>
+<script>
+/*PARTIAL:chrome.js*/
+</script>
+</body>
+</html>

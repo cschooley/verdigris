@@ -14,8 +14,10 @@ is the source of truth for values.
 - `tokens/tokens.css`: run `python3 build/tokens.py` (checks contrast first,
   refuses to write on failure; `--check` for CI).
 - `mockups/*.html`: edit `mockups/src/*.html`, then run
-  `python3 build/mockups.py`. Templates use `/*TOKENS*/` and
-  `/*ICON:name*/` markers.
+  `python3 build/mockups.py`. Templates use `/*TOKENS*/`,
+  `/*ICON:name*/` and `<!--PARTIAL:name-->` / `/*PARTIAL:name*/` markers.
+  Shared chrome (base CSS, top bar, rail, theme/e-stop JS) lives in
+  `mockups/src/partials/`; change it there, never per page.
 
 After any token or icon change: `python3 build/tokens.py && python3 build/mockups.py`.
 
@@ -44,7 +46,8 @@ After any token or icon change: `python3 build/tokens.py && python3 build/mockup
 
 `mockups/` holds self-contained HTML references (tokens and icons
 inlined so they open anywhere). Built from `mockups/src/`. Append
-`?theme=blued-light` etc. to load a specific theme.
+`?theme=blued-light` to load a theme, `?halted=1` for the e-stop state.
+The spall UX they illustrate is specified in spall's `docs/ux.md`.
 
 ## Next
 

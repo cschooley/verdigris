@@ -7,7 +7,10 @@ Rust-dark (or blued, or light), verdigris-live. Built for eight-hour sessions an
 - [`GUIDE.md`](GUIDE.md): principles, color roles, type, density, icon rules
 - [`tokens/`](tokens/): design tokens (`tokens.json` is the source of truth, `tokens.css` for direct use)
 - [`icons/`](icons/): one SVG per tool, 24px grid, `currentColor`
-- [`mockups/spall-console.html`](mockups/spall-console.html): reference mockup of the spall traffic console (self-contained, open in a browser)
+- [`mockups/`](mockups/): self-contained reference mockups of spall (open in a browser; `?theme=blued-light`, `?halted=1`)
+  - `spall-console.html`: Traffic
+  - `spall-tasks.html`: agent Tasks (work orders, approval gates, steering, e-stop)
+  - `spall-findings.html`: Findings triage inbox (keyboard disposition, evidence, redaction preview)
 
 ## Using it
 

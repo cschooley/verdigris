@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--PARTIAL:head.html-->
+<title>spall · tasks (verdigris mockup)</title>
+<style>
+/*PARTIAL:base.css*/
+main { display: grid; grid-template-columns: 340px minmax(0, 1fr) 320px; grid-template-rows: auto minmax(0, 1fr); }
+.halt-banner { grid-column: 1 / -1; }
+
+/* task list */
+.list { overflow: auto; border-right: 1px solid var(--vg-border-subtle); background: var(--vg-bg-base); }
+.list-head { display: flex; align-items: center; padding: var(--vg-space-4) var(--vg-space-5); border-bottom: 1px solid var(--vg-border-subtle); }
+.list-head h1 { font: 600 var(--vg-text-sm) var(--vg-font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--vg-text-secondary); }
+.task { display: block; padding: var(--vg-space-4) var(--vg-space-5); border-bottom: 1px solid var(--vg-bg-surface); cursor: pointer; }
+.task:hover { background: var(--vg-bg-surface); }
+.task.sel { background: var(--vg-bg-raised); box-shadow: inset 2px 0 0 var(--vg-accent-rust); }
+.task .row1 { display: flex; align-items: center; gap: var(--vg-space-3); margin-bottom: 6px; }
+.task .id { font: 500 var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); }
+.task .name { font: 500 var(--vg-text-md) var(--vg-font-sans); color: var(--vg-text-primary); margin-bottom: var(--vg-space-3); }
+.task .ask { margin: var(--vg-space-3) 0 0; padding: var(--vg-space-3); border: 1px solid var(--vg-accent-rust); border-radius: var(--vg-radius-sm);
+  font: var(--vg-text-sm)/1.45 var(--vg-font-mono); color: var(--vg-text-primary); background: color-mix(in srgb, var(--vg-accent-rust) 7%, transparent); }
+.task .ask .actions { margin-top: var(--vg-space-3); }
+.task.done .name { color: var(--vg-text-secondary); }
+
+/* task detail */
+.work { overflow: auto; }
+.work header { padding: var(--vg-space-5); border-bottom: 1px solid var(--vg-border-subtle); }
+.work header .row1 { display: flex; align-items: center; gap: var(--vg-space-4); margin-bottom: var(--vg-space-3); }
+.work h2 { font: 600 var(--vg-text-xl) var(--vg-font-sans); }
+.work h2 .m { font: 500 var(--vg-text-lg) var(--vg-font-mono); }
+.cols { display: grid; grid-template-columns: 1fr 1fr; }
+.cols .sect:first-child { border-right: 1px solid var(--vg-bg-surface); }
+.plan { list-style: none; padding: 0; font: var(--vg-text-sm)/1.9 var(--vg-font-mono); }
+.plan li { display: flex; gap: var(--vg-space-3); color: var(--vg-text-secondary); }
+.plan li .mk { width: 14px; text-align: center; }
+.plan li.done { color: var(--vg-text-tertiary); }
+.plan li.now { color: var(--vg-text-primary); }
+.plan li.now .mk { color: var(--vg-accent-verdigris); }
+body.halted .plan li.now .mk { color: var(--vg-control-stop); }
+.plan .note { color: var(--vg-text-tertiary); }
+.logwrap { max-height: 300px; overflow: auto; border: 1px solid var(--vg-border-subtle); border-radius: var(--vg-radius-sm); }
+.logwrap table { font-size: var(--vg-text-sm); }
+.logwrap td.note { color: var(--vg-text-secondary); white-space: normal; font-family: var(--vg-font-sans); }
+.cand { border: 1px solid var(--vg-border-strong); border-radius: var(--vg-radius-sm); padding: var(--vg-space-4); background: var(--vg-bg-surface); }
+.cand + .cand { margin-top: var(--vg-space-3); }
+.cand .t1 { display: flex; gap: var(--vg-space-3); align-items: baseline; margin-bottom: var(--vg-space-2); }
+.cand .t1 b { font: 600 var(--vg-text-md) var(--vg-font-sans); }
+.cand .meta { margin-bottom: var(--vg-space-3); }
+
+/* steering */
+.steer { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; border-left: 1px solid var(--vg-border-subtle); background: var(--vg-bg-surface); min-height: 0; }
+.steer h3 { padding: var(--vg-space-4) var(--vg-space-5); border-bottom: 1px solid var(--vg-border-subtle); font: 500 var(--vg-text-xs) var(--vg-font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--vg-text-secondary); }
+.msgs { overflow: auto; padding: var(--vg-space-4) var(--vg-space-5); display: flex; flex-direction: column; gap: var(--vg-space-4); }
+.msg { font: var(--vg-text-sm)/1.5 var(--vg-font-sans); }
+.msg > .who { display: block; margin-bottom: 2px; }
+.msg.sys { font-family: var(--vg-font-mono); color: var(--vg-text-tertiary); font-size: var(--vg-text-xs); }
+.compose { padding: var(--vg-space-4) var(--vg-space-5); border-top: 1px solid var(--vg-border-subtle); }
+.compose textarea { width: 100%; height: 64px; resize: none; background: var(--vg-bg-sunken); border: 1px solid var(--vg-border-subtle); border-radius: var(--vg-radius-sm);
+  color: var(--vg-text-primary); font: var(--vg-text-sm)/1.45 var(--vg-font-sans); padding: var(--vg-space-3); }
+.compose textarea::placeholder { color: var(--vg-text-tertiary); }
+.compose .hint { margin-top: var(--vg-space-3); font: var(--vg-text-xs)/1.45 var(--vg-font-mono); color: var(--vg-text-tertiary); }
+</style>
+</head>
+<body data-view="tasks">
+<!--PARTIAL:topbar.html-->
+<!--PARTIAL:rail.html-->
+<main>
+  <div class="halt-banner"><b>■ ALL AGENT TASKS HALTED</b><span>No agent requests are being sent. Human traffic is unaffected.</span><span class="spacer"></span><button class="btn" data-resume>Resume</button></div>
+
+  <section class="list" aria-label="Tasks">
+    <div class="list-head"><h1>Tasks</h1><span class="spacer"></span><button class="btn primary">+ New task <kbd>n</kbd></button></div>
+
+    <div class="task sel">
+      <div class="row1"><span class="id">T-3</span><span class="chip running"><span class="dot"></span><span class="lbl">Running</span></span></div>
+      <div class="name">Auth bypass on POST /api/v2/session</div>
+      <div class="budget"><span class="track"><span class="fill" id="miniFill" style="width:47%"></span></span><b id="miniUsed">142</b>/300 req</div>
+    </div>
+
+    <div class="task">
+      <div class="row1"><span class="id">T-4</span><span class="chip waiting">Needs approval</span></div>
+      <div class="name">IDOR sweep on /v1/cart/{id}</div>
+      <div class="budget"><span class="track"><span class="fill" style="width:20%"></span></span><b>40</b>/200 req</div>
+      <div class="ask">Wants to use <span class="m m-DELETE">DELETE</span> on /v1/cart/{id}/items/{n} (not in allowed methods).
+        <div class="actions"><button class="btn">Allow once</button><button class="btn">Deny</button></div>
+      </div>
+    </div>
+
+    <div class="task done">
+      <div class="row1"><span class="id">T-2</span><span class="chip">Done</span></div>
+      <div class="name">Map /v1 API surface from traffic</div>
+      <div class="budget"><span class="track"><span class="fill" style="width:62%"></span></span><b>124</b>/200 req · 0 candidates</div>
+    </div>
+
+    <div class="task done">
+      <div class="row1"><span class="id">T-1</span><span class="chip">Done</span></div>
+      <div class="name">Security headers check, all in-scope hosts</div>
+      <div class="budget"><span class="track"><span class="fill" style="width:9%"></span></span><b>9</b>/100 req · 2 candidates</div>
+    </div>
+  </section>
+
+  <section class="work" aria-label="Task detail">
+    <header>
+      <div class="row1"><span class="id mono" style="color:var(--vg-text-tertiary)">T-3</span><span class="chip running"><span class="dot"></span><span class="lbl">Running</span></span><span class="who you">created by you · 14:22</span><span class="spacer"></span><button class="btn">Pause</button><button class="btn">Edit constraints</button></div>
+      <h2>Auth bypass on <span class="m m-POST">POST</span> <span class="mono">/api/v2/session</span></h2>
+    </header>
+
+    <div class="sect">
+      <h3>Goal</h3>
+      <p>Find any way to obtain a valid session for another user, or keep a session valid after it should be dead. Report each issue as a candidate with the exchanges that prove it.</p>
+    </div>
+
+    <div class="cols">
+      <div class="sect">
+        <h3>Constraints</h3>
+        <dl>
+          <dt>scope</dt><dd>shop.example.test /api/v2/*</dd>
+          <dt>methods</dt><dd><span class="m m-GET">GET</span> <span class="m m-POST">POST</span> only</dd>
+          <dt>rate</dt><dd>≤ 2 req/s</dd>
+          <dt>stop if</dt><dd>3 consecutive 5xx · account lockout seen</dd>
+          <dt>time</dt><dd>30 min (11 used)</dd>
+          <dt>budget</dt><dd><div class="budget"><span class="track"><span class="fill" id="bigFill" style="width:47%"></span></span><b id="bigUsed">142</b>/300</div></dd>
+        </dl>
+      </div>
+      <div class="sect">
+        <h3>Plan</h3>
+        <ol class="plan">
+          <li class="done"><span class="mk">✓</span>Baseline login, capture session shape</li>
+          <li class="done"><span class="mk">✓</span>JWT alg confusion / none <span class="note">· not vulnerable</span></li>
+          <li class="now"><span class="mk">▶</span>Session fixation across login</li>
+          <li><span class="mk">○</span>Refresh token reuse after logout</li>
+          <li><span class="mk">○</span>Remember-me cookie forgery</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h3>Proposed candidates <span class="who">· you decide in Findings</span></h3>
+      <div class="cand">
+        <div class="t1"><b>Session ID not rotated at login</b><span class="spacer"></span><span class="who">confidence 72</span></div>
+        <div class="meta"><span>3 exchanges</span><span>step 3</span><span>CWE-384</span></div>
+        <div class="actions"><a class="btn" href="spall-findings.html">Open in Findings <kbd>5</kbd></a><button class="btn">View evidence</button></div>
+      </div>
+    </div>
+
+    <div class="sect">
+      <h3>Request log <span class="who">· every row links to Traffic</span></h3>
+      <div class="logwrap" id="logwrap">
+        <table>
+          <thead><tr><th>Time</th><th>Step</th><th>Method</th><th>Path</th><th>Status</th><th>Why</th></tr></thead>
+          <tbody id="log"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <aside class="steer" aria-label="Steering">
+    <h3>Steer T-3</h3>
+    <div class="msgs">
+      <div class="msg sys">14:22 task created · constraints set by you</div>
+      <div class="msg"><span class="who agent">agent</span>Baseline done. Session is an opaque <span class="mono">sid</span> cookie plus a JWT for the API. Starting with JWT checks since they're cheapest.</div>
+      <div class="msg"><span class="who you">you</span>Skip password reset entirely, it's out of scope this week.</div>
+      <div class="msg"><span class="who agent">agent</span>Understood, removed reset flows from the plan. The <span class="mono">sid</span> value before and after login is identical. Proposed a candidate, confirming with a second account now.</div>
+      <div class="msg sys">14:31 T-4 paused · needs approval for DELETE</div>
+    </div>
+    <div class="compose">
+      <textarea placeholder="Steer the agent… e.g. focus on the remember-me cookie next"></textarea>
+      <div class="hint">The agent can propose findings. Only you can promote them.<br><kbd>Shift</kbd>+<kbd>Esc</kbd> halts every task.</div>
+    </div>
+  </aside>
+</main>
+<footer>
+  <span>taphttp <span class="ok">● connected</span></span>
+  <span>1 running · 1 waiting · 2 done</span>
+  <span class="spacer"></span>
+  <span id="themeName">theme rust</span>
+  <span><kbd>t</kbd> light/dark</span><span><kbd>1</kbd>–<kbd>5</kbd> views</span><span><kbd>n</kbd> new task</span>
+</footer>
+<script>
+window.vgOwnTraffic = true;
+const steps = [
+  ["3","POST","/api/v2/session","200","login as user A, record sid"],
+  ["3","GET","/api/v2/me","200","confirm session is A"],
+  ["3","POST","/api/v2/session","200","re-login with pre-set sid cookie"],
+  ["3","GET","/api/v2/me","200","sid unchanged after login"],
+  ["3","POST","/api/v2/logout","204","logout A"],
+  ["3","GET","/api/v2/me","401","old sid rejected after logout"],
+  ["3","POST","/api/v2/session","200","second account, same fixed sid"],
+];
+const log = document.getElementById('log');
+let used = 142, t = Date.now() - 40000, i = 0;
+const mcls = m => ["GET","POST","PUT","PATCH","DELETE"].includes(m) ? m : "OTHER";
+function row(s, fresh) {
+  t += 1200 + Math.floor(Math.random() * 900);
+  const ts = new Date(t).toTimeString().slice(0, 8);
+  const tr = document.createElement('tr'); if (fresh) tr.className = 'new';
+  tr.innerHTML = `<td class="t">${ts}</td><td class="dim">${s[0]}</td><td class="m m-${mcls(s[1])}">${s[1]}</td><td>${s[2]}</td><td class="s${s[3][0]}">${s[3]}</td><td class="note">${s[4]}</td>`;
+  log.appendChild(tr);
+  const w = document.getElementById('logwrap'); w.scrollTop = w.scrollHeight;
+}
+for (; i < 4; i++) row(steps[i], false);
+function tick() {
+  if (!document.body.classList.contains('halted')) {
+    row(steps[i % steps.length], true); i++;
+    used = Math.min(300, used + 1);
+    for (const [f, u] of [['bigFill','bigUsed'], ['miniFill','miniUsed']]) {
+      document.getElementById(f).style.width = (used / 3) + '%';
+      document.getElementById(u).textContent = used;
+    }
+    window.vgPulse && window.vgPulse();
+  }
+  setTimeout(tick, 1500 + Math.random() * 1200);
+}
+setTimeout(tick, 1500);
+</script>
+<script>
+/*PARTIAL:chrome.js*/
+</script>
+</body>
+</html>
