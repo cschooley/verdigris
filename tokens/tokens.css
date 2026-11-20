@@ -1,0 +1,59 @@
+/* verdigris design tokens v0.1. Hand-synced from tokens.json. */
+:root {
+  --vg-bg-base: #17130F;
+  --vg-bg-surface: #1F1A16;
+  --vg-bg-raised: #29221D;
+  --vg-bg-sunken: #110E0B;
+
+  --vg-border-subtle: #3A312A;
+  --vg-border-strong: #54483E;
+
+  --vg-text-primary: #E8DED3;
+  --vg-text-secondary: #ADA092;
+  --vg-text-tertiary: #958779;
+
+  --vg-accent-verdigris: #4FBFAD;      /* live / active ONLY */
+  --vg-accent-verdigris-glow: #4FBFAD59;
+  --vg-accent-rust: #DE7848;           /* brand / primary action / focus */
+
+  --vg-status-2xx: #A3B97F;
+  --vg-status-3xx: #86A9CC;
+  --vg-status-4xx: #E2AB4A;
+  --vg-status-5xx: #E9716A;
+  --vg-status-none: #958779;
+
+  --vg-method-get: #E6D6B0;
+  --vg-method-post: #E8894A;
+  --vg-method-put: #DDB94E;
+  --vg-method-patch: #C99BD6;
+  --vg-method-delete: #E66A55;
+  --vg-method-other: #9E9185;
+
+  --vg-font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --vg-font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+
+  --vg-text-xs: 11px;
+  --vg-text-sm: 12px;
+  --vg-text-md: 13px;
+  --vg-text-lg: 15px;
+  --vg-text-xl: 18px;
+
+  --vg-space-1: 2px;
+  --vg-space-2: 4px;
+  --vg-space-3: 8px;
+  --vg-space-4: 12px;
+  --vg-space-5: 16px;
+  --vg-space-6: 24px;
+  --vg-space-7: 32px;
+
+  --vg-radius-sm: 2px;
+  --vg-radius-md: 4px;
+
+  --vg-row-dense: 26px;
+  --vg-row-relaxed: 32px;
+
+  --vg-motion-fast: 80ms;
+  --vg-motion-base: 140ms;
+  --vg-motion-pulse: 1.6s;
+  --vg-easing: cubic-bezier(0.2, 0, 0, 1);
+}
