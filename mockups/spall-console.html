@@ -180,7 +180,8 @@ body {
 .themes { display: flex; border: 1px solid var(--vg-border-subtle); border-radius: var(--vg-radius-sm); overflow: hidden; }
 .themes button { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 var(--vg-space-4); background: none; border: 0;
   border-right: 1px solid var(--vg-border-subtle); color: var(--vg-text-secondary); font: 500 var(--vg-text-xs) var(--vg-font-mono);
-  letter-spacing: .06em; cursor: pointer; transition: background var(--vg-motion-fast) var(--vg-easing), color var(--vg-motion-fast) var(--vg-easing); }
+  letter-spacing: .06em; cursor: pointer; }
+body.ready .themes button { transition: background var(--vg-motion-fast) var(--vg-easing), color var(--vg-motion-fast) var(--vg-easing); }
 .themes button:last-child { border-right: 0; }
 .themes button:hover { color: var(--vg-text-primary); background: var(--vg-bg-raised); }
 .themes button[aria-pressed="true"] { color: var(--vg-text-primary); background: var(--vg-bg-raised); box-shadow: inset 0 -2px 0 var(--vg-accent-rust); }
@@ -261,10 +262,13 @@ kbd { font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-secondar
   <div class="meter"><span class="segs" id="segs"></span><b id="rate">0.0</b> req/s</div>
   <input class="filter" placeholder="filter  host:example.com  status:4xx  method:POST" aria-label="Filter traffic">
   <div class="spacer"></div>
-  <div class="themes" role="group" aria-label="Theme">
+  <div class="themes" role="group" aria-label="Metal">
     <button data-metal="rust" aria-pressed="true"><span class="sw sw-rust"></span>Rust</button>
     <button data-metal="blued" aria-pressed="false"><span class="sw sw-blued"></span>Blued</button>
-    <button id="mode" aria-label="Toggle light or dark" title="Toggle light/dark (t)"><span id="modeIcon">◐</span><span id="modeLabel">Dark</span></button>
+  </div>
+  <div class="themes" role="group" aria-label="Brightness" title="t toggles">
+    <button data-mode="dark" aria-pressed="true"><span aria-hidden="true">◐</span>Dark</button>
+    <button data-mode="light" aria-pressed="false"><span aria-hidden="true">○</span>Light</button>
   </div>
   <div class="launch" id="launch">
     <button aria-label="Switch tool" onclick="document.getElementById('launch').classList.toggle('open')"><span class="grid9"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
@@ -367,13 +371,12 @@ function applyTheme() {
   if (name === 'rust') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', name);
   document.querySelectorAll('[data-metal]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.metal === state.metal)));
-  document.getElementById('modeLabel').textContent = state.light ? 'Light' : 'Dark';
-  document.getElementById('modeIcon').textContent = state.light ? '○' : '◐';
+  document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.mode === 'light') === state.light)));
   document.getElementById('themeName').textContent = 'theme ' + name;
   try { localStorage.setItem('vg-theme', JSON.stringify(state)); } catch (e) { /* ignore */ }
 }
 document.querySelectorAll('[data-metal]').forEach(b => b.onclick = () => { state.metal = b.dataset.metal; applyTheme(); });
-document.getElementById('mode').onclick = () => { state.light = !state.light; applyTheme(); };
+document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { state.light = b.dataset.mode === 'light'; applyTheme(); });
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   if (e.key === 't') { state.light = !state.light; applyTheme(); }
