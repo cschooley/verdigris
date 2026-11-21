@@ -4,7 +4,7 @@
 Markers, resolved in this order:
   <!--PARTIAL:name-->  or  /*PARTIAL:name*/   -> mockups/src/partials/<name>
   /*TOKENS*/                                  -> tokens/tokens.css
-  /*ICON:name*/                               -> icons/<name>.svg, inlined
+  /*ICON:name*/  or  /*ICON:views/name*/      -> icons/<name>.svg, inlined
 
 Partials may contain TOKENS and ICON markers (and other partials).
 Output: mockups/<page>.html. Run after build/tokens.py.
@@ -39,8 +39,8 @@ def main() -> None:
     for src in sorted(SRC.glob("*.html")):
         html = expand_partials(src.read_text())
         html = html.replace("/*TOKENS*/", tokens)
-        html = re.sub(r"/\*ICON:(\w+)\*/", inline_icon, html)
-        leftover = re.findall(r"/\*(?:TOKENS|ICON:\w+|PARTIAL:[\w.-]+)\*/|<!--PARTIAL:[\w.-]+-->", html)
+        html = re.sub(r"/\*ICON:([\w/]+)\*/", inline_icon, html)
+        leftover = re.findall(r"/\*(?:TOKENS|ICON:[\w/]+|PARTIAL:[\w.-]+)\*/|<!--PARTIAL:[\w.-]+-->", html)
         if leftover:
             raise RuntimeError(f"{src.name}: unresolved markers {leftover}")
         out = ROOT / "mockups" / src.name

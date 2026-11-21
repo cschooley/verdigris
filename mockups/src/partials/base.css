@@ -70,6 +70,7 @@ body.ready .seg button { transition: background var(--vg-motion-fast) var(--vg-e
   border-right: 1px solid var(--vg-border-subtle); background: var(--vg-bg-surface); }
 .rail a { position: relative; width: 36px; height: 36px; display: grid; place-items: center; color: var(--vg-text-tertiary); border-radius: var(--vg-radius-sm); text-decoration: none; }
 .rail a:hover { color: var(--vg-text-primary); background: var(--vg-bg-raised); }
+.rail a svg { width: 20px; height: 20px; }
 .rail a.todo { opacity: .45; }
 [data-view="engagement"] .rail a[data-v="engagement"], [data-view="traffic"] .rail a[data-v="traffic"], [data-view="surface"] .rail a[data-v="surface"],
 [data-view="tasks"] .rail a[data-v="tasks"], [data-view="findings"] .rail a[data-v="findings"] { color: var(--vg-text-primary); background: var(--vg-bg-raised); box-shadow: inset 2px 0 0 var(--vg-accent-rust); opacity: 1; }

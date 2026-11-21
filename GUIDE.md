@@ -92,6 +92,8 @@ See `icons/`. Rules:
 - One simple geometric idea per tool, drawn from the corrosion theme.
 - At most one accent element per icon, using `var(--vg-icon-accent, currentColor)`.
 - Each tool serves its own icon from its suite manifest; Kudzu bundles nothing.
+- View icons (spall's rail) live in `icons/views/` under the same rules. The mockup rail includes them via `/*ICON:views/<name>*/`, so the files are the single source.
+- Only shape elements (`path`, `circle`, `rect`, `line`, `polyline`, `polygon`, `ellipse`, `g`), presentation attributes and `<title>`. No `style`, `use`/`href`, `url()`, `<image>`, `<foreignObject>` or scripts: consumers parse icons strictly.
 
 | Tool | Glyph idea |
 |---|---|

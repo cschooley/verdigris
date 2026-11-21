@@ -227,6 +227,7 @@ body.ready .seg button { transition: background var(--vg-motion-fast) var(--vg-e
   border-right: 1px solid var(--vg-border-subtle); background: var(--vg-bg-surface); }
 .rail a { position: relative; width: 36px; height: 36px; display: grid; place-items: center; color: var(--vg-text-tertiary); border-radius: var(--vg-radius-sm); text-decoration: none; }
 .rail a:hover { color: var(--vg-text-primary); background: var(--vg-bg-raised); }
+.rail a svg { width: 20px; height: 20px; }
 .rail a.todo { opacity: .45; }
 [data-view="engagement"] .rail a[data-v="engagement"], [data-view="traffic"] .rail a[data-v="traffic"], [data-view="surface"] .rail a[data-v="surface"],
 [data-view="tasks"] .rail a[data-v="tasks"], [data-view="findings"] .rail a[data-v="findings"] { color: var(--vg-text-primary); background: var(--vg-bg-raised); box-shadow: inset 2px 0 0 var(--vg-accent-rust); opacity: 1; }
@@ -462,20 +463,20 @@ td.path { overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
 
 <nav class="rail" aria-label="Views">
   <a href="#" class="todo" data-v="engagement" data-key="1" title="Engagement (1) · not mocked yet">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/><path d="M3 20h18"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/><path d="M3 20h18"/></svg>
   </a>
   <a href="spall-console.html" data-v="traffic" data-key="2" title="Traffic (2)">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14"/><path d="M15 5l3 3-3 3"/><path d="M20 16H6"/><path d="M9 13l-3 3 3 3"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14"/><path d="M15 5l3 3-3 3"/><path d="M20 16H6"/><path d="M9 13l-3 3 3 3"/></svg>
   </a>
   <a href="#" class="todo" data-v="surface" data-key="3" title="Surface (3) · not mocked yet">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1" stroke-dasharray="2 2"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1" stroke-dasharray="2 2"/></svg>
   </a>
   <a href="spall-tasks.html" data-v="tasks" data-key="4" title="Tasks (4)">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5.5L20 11l-5.5 2.5L12 19l-2.5-5.5L4 11l5.5-2.5z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.5L20 11l-5.5 2.5L12 19l-2.5-5.5L4 11l5.5-2.5z"/></svg>
     <span class="badge">1</span>
   </a>
   <a href="spall-findings.html" data-v="findings" data-key="5" title="Findings (5)">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>
     <span class="badge" id="findBadge">6</span>
   </a>
 </nav>
