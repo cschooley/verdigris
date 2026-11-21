@@ -48,7 +48,7 @@
     const r = recent.length / 5; $('rate').textContent = r.toFixed(1);
     [...segs.children].forEach((s, i) => s.classList.toggle('on', i < Math.round(r * 2.5)));
   }, 500);
-  if (!window.vgOwnTraffic) (function amb() { window.vgPulse(); setTimeout(amb, 300 + Math.random() * 600); })();
+  if (!window.vgOwnTraffic) (function amb() { window.vgPulse(); setTimeout(amb, (300 + Math.random() * 600) / (window.vgQuad ? 4 : 1)); })();
 
   // keys: t theme, 1-5 views, Shift+Esc e-stop
   document.addEventListener('keydown', e => {
@@ -62,3 +62,4 @@
 
   requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('ready')));
 })();
+/*PARTIAL:console.js*/

@@ -1,0 +1,36 @@
+/* ---------- ~ console (drop-down) ---------- */
+.console { position: fixed; z-index: 30; top: 44px; left: 0; right: 0; height: 42vh; min-height: 220px; display: flex; flex-direction: column;
+  background-color: var(--vg-bg-sunken);
+  background-image: repeating-linear-gradient(0deg, transparent 0 2px, color-mix(in srgb, var(--vg-text-primary) 2.5%, transparent) 2px 3px);
+  border-bottom: 2px solid var(--vg-border-strong); box-shadow: 0 12px 32px color-mix(in srgb, var(--vg-bg-sunken) 70%, transparent);
+  transform: translateY(calc(-100% - 46px)); visibility: hidden; }
+body.ready .console { transition: transform var(--vg-motion-base) var(--vg-easing), visibility 0s linear var(--vg-motion-base); }
+.console.open { transform: translateY(0); visibility: visible; }
+body.ready .console.open { transition: transform var(--vg-motion-base) var(--vg-easing), visibility 0s; }
+@media (prefers-reduced-motion: reduce) { body.ready .console, body.ready .console.open { transition: none; } }
+.con-log { flex: 1; overflow: auto; padding: var(--vg-space-4) var(--vg-space-5) var(--vg-space-2); font: var(--vg-text-sm)/1.6 var(--vg-font-mono); color: var(--vg-text-secondary); white-space: pre-wrap; }
+.con-log .l-cmd { color: var(--vg-text-primary); }
+.con-log .l-cmd::before { content: "] "; color: var(--vg-text-tertiary); }
+.con-log .l-sys { color: var(--vg-text-tertiary); }
+.con-log .l-out { color: var(--vg-text-primary); }
+.con-log .l-agent::before { content: "◆ "; color: var(--vg-text-primary); }
+.con-log .l-quad { color: var(--vg-boost); }
+.con-log .l-stop { color: var(--vg-control-stop); }
+.con-log .l-warn::before { content: "warning: "; color: var(--vg-status-4xx); }
+.con-in { display: flex; align-items: center; gap: var(--vg-space-3); padding: var(--vg-space-3) var(--vg-space-5); border-top: 1px solid var(--vg-border-subtle); }
+.con-prompt { font: 600 var(--vg-text-md) var(--vg-font-mono); color: var(--vg-accent-rust); }
+#conInput { flex: 1; background: none; border: 0; outline: 0; color: var(--vg-text-primary); font: var(--vg-text-md) var(--vg-font-mono); caret-color: var(--vg-accent-rust); }
+#conInput::placeholder { color: var(--vg-text-tertiary); }
+.con-hint { font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); white-space: nowrap; }
+
+/* ---------- quad (boost) state ---------- */
+.quad-glow { display: none; position: fixed; inset: 0; z-index: 40; pointer-events: none;
+  box-shadow: inset 0 0 0 2px var(--vg-boost), inset 0 0 70px 6px var(--vg-boost-glow); }
+body.quad .quad-glow { display: block; animation: quadpulse 1.2s var(--vg-easing) infinite alternate; }
+@keyframes quadpulse { from { opacity: .7; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { body.quad .quad-glow { animation: none; } }
+.quad-chip { display: none; align-items: center; gap: 6px; height: 26px; padding: 0 var(--vg-space-4); border: 1px solid var(--vg-boost); border-radius: var(--vg-radius-sm);
+  color: var(--vg-boost); font: 600 var(--vg-text-xs) var(--vg-font-mono); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+body.quad .quad-chip { display: inline-flex; }
+body.quad .meter .segs i.on { background: var(--vg-boost); }
+body.quad .meter b { color: var(--vg-boost); }

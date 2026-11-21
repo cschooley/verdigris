@@ -165,3 +165,4 @@ footer { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--vg-
   border-top: 1px solid var(--vg-border-subtle); color: var(--vg-text-tertiary); font: var(--vg-text-xs) var(--vg-font-mono); white-space: nowrap; overflow: hidden; }
 footer .ok { color: var(--vg-accent-verdigris); }
 kbd { font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-secondary); border: 1px solid var(--vg-border-strong); border-radius: var(--vg-radius-sm); padding: 0 4px; }
+/*PARTIAL:console.css*/

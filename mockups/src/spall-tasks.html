@@ -209,7 +209,7 @@ function tick() {
     }
     window.vgPulse && window.vgPulse();
   }
-  setTimeout(tick, 1500 + Math.random() * 1200);
+  setTimeout(tick, (1500 + Math.random() * 1200) / (window.vgQuad ? 4 : 1));
 }
 setTimeout(tick, 1500);
 </script>

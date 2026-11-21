@@ -48,6 +48,7 @@ Set the attribute on `<html>`. Rules that hold in every theme:
 | Brand / action / focus | `--vg-accent-rust` | Primary button, focus ring, wordmark |
 | Needs your action | `--vg-accent-rust` | Approval requests, triage badges, candidate state |
 | Stop / halted | `--vg-control-stop` | Agent e-stop and halted state ONLY. Not for errors or 5xx |
+| Boost / quad | `--vg-boost`, `--vg-boost-glow` | A time-boxed burst mode is active (quad). Screen-edge glow, countdown chip, meter. Nothing else |
 | HTTP status class | `--vg-status-*` | Status code text in traffic views |
 | HTTP method | `--vg-method-*` | Method label (808-style category color) |
 | Severity | TBD (spall M3) | Do not reuse status colors |
@@ -69,6 +70,19 @@ Default table row height is 26px (`--vg-row-dense`). These are expert tools; den
 ## Contrast
 
 All text tokens meet WCAG AA (4.5:1) on `bg-base` and `bg-surface` in every theme. This is enforced: `build/tokens.py` refuses to write `tokens.css` if any required pair fails. On `bg-raised` a few tokens dip just under 4.5 (reported as `(low)`); don't use `text-tertiary` or `status-none` for body text on raised surfaces.
+
+## The console
+
+Every suite app gets the same drop-down console, Quake-style.
+
+- **Toggle:** the backtick key (`` ` ``; `~` also works). Configurable, because backtick is a dead key on many non-US layouts. Never opens while typing in an input. `Esc` or backtick closes it.
+- **Look:** drops from under the top bar to ~42% of the viewport, `bg-sunken` with faint scanlines, `]` prompt in rust, monospace throughout. Opaque: the page behind must not bleed through.
+- **Behavior:** command history (↑/↓), tab completion, scrollback. System events land here too (agent messages, late OOB callbacks, warnings).
+- **Output is text only.** Console lines are never rendered as HTML.
+- **One command registry.** The console, the ⌘K palette and the MCP server expose the same commands with the same names and arguments.
+- Respects reduced motion: no slide, just appears.
+
+Aesthetic nods to Quake are welcome (the drop-down, the `]` prompt, a little grit). id Software's fonts, textures, logos and sounds are not.
 
 ## Icons
 

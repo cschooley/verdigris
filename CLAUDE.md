@@ -16,7 +16,8 @@ is the source of truth for values.
 - `mockups/*.html`: edit `mockups/src/*.html`, then run
   `python3 build/mockups.py`. Templates use `/*TOKENS*/`,
   `/*ICON:name*/` and `<!--PARTIAL:name-->` / `/*PARTIAL:name*/` markers.
-  Shared chrome (base CSS, top bar, rail, theme/e-stop JS) lives in
+  Shared chrome (base CSS, top bar, rail, theme/e-stop JS, the ` console
+  and quad state) lives in
   `mockups/src/partials/`; change it there, never per page.
 
 After any token or icon change: `python3 build/tokens.py && python3 build/mockups.py`.
@@ -30,6 +31,8 @@ After any token or icon change: `python3 build/tokens.py && python3 build/mockup
 - **Contrast is checked, not eyeballed.** `build/tokens.py` enforces
   4.5:1 for every text token on `bg-base` and `bg-surface` in every
   theme. Paste its PASS summary in the commit message.
+- **Boost is quad-only.** `--vg-boost` appears only while a burst mode
+  is active. It is not an accent, link or info color.
 - **Four themes, one set of roles.** rust (default), rust-light, blued,
   blued-light. A new token must get a value in every theme.
 - **Never color alone.** Status and method are always shown as text too.
@@ -46,7 +49,8 @@ After any token or icon change: `python3 build/tokens.py && python3 build/mockup
 
 `mockups/` holds self-contained HTML references (tokens and icons
 inlined so they open anywhere). Built from `mockups/src/`. Append
-`?theme=blued-light` to load a theme, `?halted=1` for the e-stop state.
+`?theme=blued-light` to load a theme, `?halted=1` for the e-stop state,
+`?console=1` (add `&demo=1` to run help and quad) and `?quad=1`.
 The spall UX they illustrate is specified in spall's `docs/ux.md`.
 
 ## Next
