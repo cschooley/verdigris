@@ -34,3 +34,5 @@ body.quad .quad-glow { display: block; animation: quadpulse 1.2s var(--vg-easing
 body.quad .quad-chip { display: inline-flex; }
 body.quad .meter .segs i.on { background: var(--vg-boost); }
 body.quad .meter b { color: var(--vg-boost); }
+
+.con-unread { cursor: pointer; color: var(--vg-accent-rust); border: 1px solid var(--vg-accent-rust); border-radius: var(--vg-radius-sm); padding: 0 5px; }

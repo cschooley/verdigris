@@ -4,7 +4,15 @@
   const con = $('console'), log = $('conLog'), input = $('conInput');
   const hist = []; let hi = 0;
 
+  let unread = 0;
+  function badge() {
+    let b = document.getElementById('conUnread');
+    const f = document.querySelector('footer');
+    if (!b && f) { b = document.createElement('span'); b.id = 'conUnread'; b.className = 'con-unread'; b.title = 'New console messages (press `)'; b.onclick = () => open(true); f.insertBefore(b, f.children[2] || null); }
+    if (b) { b.textContent = '` ' + unread; b.style.display = unread ? '' : 'none'; }
+  }
   function line(text, cls) {
+    if (!con.classList.contains('open') && cls && cls !== 'cmd' && booted) { unread++; badge(); }
     const d = document.createElement('div');
     d.className = 'l-' + (cls || 'out');
     d.textContent = text;              // text only: console output is never HTML
@@ -16,8 +24,9 @@
     const want = on === undefined ? !con.classList.contains('open') : on;
     con.classList.toggle('open', want);
     con.setAttribute('aria-hidden', String(!want));
-    if (want) setTimeout(() => input.focus(), 0); else input.blur();
+    if (want) { unread = 0; badge(); setTimeout(() => input.focus(), 0); } else input.blur();
   }
+  let booted = false;
 
   // ---------- quad ----------
   const LIMIT = 5, BASE = 2;           // engagement ceiling and normal agent rate (req/s)
@@ -104,10 +113,15 @@
     if (e.key === '`' || e.key === '~') { e.preventDefault(); open(); }
   });
 
+  window.vgCmds = cmds; window.vgExec = exec;
+  window.vgOpenConsole = (prefill) => { open(true); if (prefill !== undefined) { input.value = prefill; setTimeout(() => { input.focus(); input.setSelectionRange(prefill.length, prefill.length); }, 0); } };
   line('spall console · type help', 'sys');
   line('agent T-3: session fixation confirmed with second account, candidate proposed', 'agent');
   line('oob: late DNS callback on a7f3.oast.example.net (exchange 01JD8N7A…E02, 41 min after send)', 'sys');
 
+  booted = true;
+  // a late event arriving while the console is closed: shows the unread count
+  setTimeout(() => line('oob: HTTP callback on c19e.oast.example.net from 10.20.4.17 (exchange 01JD8Q41…A10)', 'sys'), 6000);
   // ?console=1 and ?quad=1 for screenshots
   const q = new URLSearchParams(location.search);
   if (q.get('console') === '1') { open(true); if (q.get('demo') === '1') ['help', 'quad 120'].forEach(exec); }

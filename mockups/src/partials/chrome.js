@@ -63,3 +63,4 @@
   requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('ready')));
 })();
 /*PARTIAL:console.js*/
+/*PARTIAL:palette.js*/

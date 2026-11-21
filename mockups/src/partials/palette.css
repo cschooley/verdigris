@@ -1,0 +1,21 @@
+/* ---------- command palette + shortcut sheet ---------- */
+.overlay { position: fixed; inset: 0; z-index: 50; display: grid; justify-items: center; align-items: start; padding-top: 12vh;
+  background: color-mix(in srgb, var(--vg-bg-sunken) 55%, transparent); }
+.overlay[hidden] { display: none; }
+.pal, .sheet { width: min(620px, 92vw); background: var(--vg-bg-raised); border: 1px solid var(--vg-border-strong); border-radius: var(--vg-radius-md);
+  box-shadow: 0 20px 60px color-mix(in srgb, var(--vg-bg-sunken) 80%, transparent); overflow: hidden; }
+#palInput { width: 100%; height: 48px; padding: 0 var(--vg-space-5); background: none; border: 0; border-bottom: 1px solid var(--vg-border-subtle); outline: 0;
+  color: var(--vg-text-primary); font: var(--vg-text-lg) var(--vg-font-mono); caret-color: var(--vg-accent-rust); }
+#palInput::placeholder { color: var(--vg-text-tertiary); }
+#palList { list-style: none; margin: 0; padding: var(--vg-space-2) 0; max-height: 340px; overflow: auto; }
+#palList li { display: flex; align-items: center; gap: var(--vg-space-4); padding: 0 var(--vg-space-5); height: 34px; cursor: pointer; font: var(--vg-text-md) var(--vg-font-sans); color: var(--vg-text-primary); }
+#palList li .grp { width: 64px; font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); text-transform: uppercase; letter-spacing: .08em; }
+#palList li .hint { margin-left: auto; font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); }
+#palList li.on { background: var(--vg-bg-surface); box-shadow: inset 2px 0 0 var(--vg-accent-rust); }
+#palList li.none { color: var(--vg-text-tertiary); cursor: default; }
+.pal-foot { display: flex; gap: var(--vg-space-5); padding: var(--vg-space-3) var(--vg-space-5); border-top: 1px solid var(--vg-border-subtle); font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); }
+.sheet { padding: var(--vg-space-5) var(--vg-space-6) var(--vg-space-4); }
+.sheet h2 { font: 600 var(--vg-text-lg) var(--vg-font-sans); margin-bottom: var(--vg-space-4); }
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--vg-space-6); margin-bottom: var(--vg-space-4); }
+.sheet dl { grid-template-columns: max-content 1fr; gap: 6px var(--vg-space-4); align-items: center; }
+.sheet dt { white-space: nowrap; } .sheet dd { color: var(--vg-text-primary); font-family: var(--vg-font-sans); }

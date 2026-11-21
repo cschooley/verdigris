@@ -359,6 +359,30 @@ body.quad .quad-chip { display: inline-flex; }
 body.quad .meter .segs i.on { background: var(--vg-boost); }
 body.quad .meter b { color: var(--vg-boost); }
 
+.con-unread { cursor: pointer; color: var(--vg-accent-rust); border: 1px solid var(--vg-accent-rust); border-radius: var(--vg-radius-sm); padding: 0 5px; }
+
+/* ---------- command palette + shortcut sheet ---------- */
+.overlay { position: fixed; inset: 0; z-index: 50; display: grid; justify-items: center; align-items: start; padding-top: 12vh;
+  background: color-mix(in srgb, var(--vg-bg-sunken) 55%, transparent); }
+.overlay[hidden] { display: none; }
+.pal, .sheet { width: min(620px, 92vw); background: var(--vg-bg-raised); border: 1px solid var(--vg-border-strong); border-radius: var(--vg-radius-md);
+  box-shadow: 0 20px 60px color-mix(in srgb, var(--vg-bg-sunken) 80%, transparent); overflow: hidden; }
+#palInput { width: 100%; height: 48px; padding: 0 var(--vg-space-5); background: none; border: 0; border-bottom: 1px solid var(--vg-border-subtle); outline: 0;
+  color: var(--vg-text-primary); font: var(--vg-text-lg) var(--vg-font-mono); caret-color: var(--vg-accent-rust); }
+#palInput::placeholder { color: var(--vg-text-tertiary); }
+#palList { list-style: none; margin: 0; padding: var(--vg-space-2) 0; max-height: 340px; overflow: auto; }
+#palList li { display: flex; align-items: center; gap: var(--vg-space-4); padding: 0 var(--vg-space-5); height: 34px; cursor: pointer; font: var(--vg-text-md) var(--vg-font-sans); color: var(--vg-text-primary); }
+#palList li .grp { width: 64px; font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); text-transform: uppercase; letter-spacing: .08em; }
+#palList li .hint { margin-left: auto; font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); }
+#palList li.on { background: var(--vg-bg-surface); box-shadow: inset 2px 0 0 var(--vg-accent-rust); }
+#palList li.none { color: var(--vg-text-tertiary); cursor: default; }
+.pal-foot { display: flex; gap: var(--vg-space-5); padding: var(--vg-space-3) var(--vg-space-5); border-top: 1px solid var(--vg-border-subtle); font: var(--vg-text-xs) var(--vg-font-mono); color: var(--vg-text-tertiary); }
+.sheet { padding: var(--vg-space-5) var(--vg-space-6) var(--vg-space-4); }
+.sheet h2 { font: 600 var(--vg-text-lg) var(--vg-font-sans); margin-bottom: var(--vg-space-4); }
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--vg-space-6); margin-bottom: var(--vg-space-4); }
+.sheet dl { grid-template-columns: max-content 1fr; gap: 6px var(--vg-space-4); align-items: center; }
+.sheet dt { white-space: nowrap; } .sheet dd { color: var(--vg-text-primary); font-family: var(--vg-font-sans); }
+
 
 main { display: grid; grid-template-columns: minmax(0, 1fr) 440px; grid-template-rows: 40px minmax(0, 1fr); }
 .toolbar { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--vg-space-4); padding: 0 var(--vg-space-5); border-bottom: 1px solid var(--vg-border-subtle); }
@@ -417,6 +441,24 @@ td.path { overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
   </div>
 </section>
 
+<div class="overlay" id="palette" hidden>
+  <div class="pal" role="dialog" aria-modal="true" aria-label="Command palette">
+    <input id="palInput" autocomplete="off" spellcheck="false" placeholder="Type a command or view…" aria-label="Command">
+    <ul id="palList" role="listbox"></ul>
+    <div class="pal-foot"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>⏎</kbd> run</span><span><kbd>Esc</kbd> close</span></div>
+  </div>
+</div>
+<div class="overlay" id="keys" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+    <h2>Keyboard shortcuts</h2>
+    <div class="cols2">
+      <dl id="keysGlobal"></dl>
+      <dl id="keysView"></dl>
+    </div>
+    <p class="who">Press <kbd>?</kbd> anytime. <kbd>Esc</kbd> closes.</p>
+  </div>
+</div>
+
 
 <nav class="rail" aria-label="Views">
   <a href="#" class="todo" data-v="engagement" data-key="1" title="Engagement (1) · not mocked yet">
@@ -443,7 +485,7 @@ td.path { overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
     <input class="filter" placeholder="filter   host:example.test  status:4xx  method:POST  by:agent" aria-label="Filter traffic">
     <span class="who agent">agent · T-3</span><span class="who you">you</span>
     <div class="spacer"></div>
-    <kbd>⌘K</kbd><span class="who">commands</span>
+    <kbd class="modk">Ctrl K</kbd><span class="who">commands</span>
   </div>
   <div class="tablewrap">
     <table>
@@ -545,7 +587,7 @@ td.path { overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
   <span id="count">0 exchanges</span>
   <span class="spacer"></span>
   <span id="themeName">theme rust</span>
-  <span><kbd>t</kbd> light/dark</span><span><kbd>1</kbd>–<kbd>5</kbd> views</span><span><kbd>/</kbd> filter</span><span><kbd>j</kbd><kbd>k</kbd> move</span>
+  <span><kbd>?</kbd> keys</span><span><kbd>`</kbd> console</span><span><kbd>t</kbd> light/dark</span><span><kbd>1</kbd>–<kbd>5</kbd> views</span><span><kbd>/</kbd> filter</span><span><kbd>j</kbd><kbd>k</kbd> move</span>
 </footer>
 <script>
 // inspector: which exchange view, request/response tabs, hex toggle
@@ -665,7 +707,15 @@ setTimeout(tick, 1200);
   const con = $('console'), log = $('conLog'), input = $('conInput');
   const hist = []; let hi = 0;
 
+  let unread = 0;
+  function badge() {
+    let b = document.getElementById('conUnread');
+    const f = document.querySelector('footer');
+    if (!b && f) { b = document.createElement('span'); b.id = 'conUnread'; b.className = 'con-unread'; b.title = 'New console messages (press `)'; b.onclick = () => open(true); f.insertBefore(b, f.children[2] || null); }
+    if (b) { b.textContent = '` ' + unread; b.style.display = unread ? '' : 'none'; }
+  }
   function line(text, cls) {
+    if (!con.classList.contains('open') && cls && cls !== 'cmd' && booted) { unread++; badge(); }
     const d = document.createElement('div');
     d.className = 'l-' + (cls || 'out');
     d.textContent = text;              // text only: console output is never HTML
@@ -677,8 +727,9 @@ setTimeout(tick, 1200);
     const want = on === undefined ? !con.classList.contains('open') : on;
     con.classList.toggle('open', want);
     con.setAttribute('aria-hidden', String(!want));
-    if (want) setTimeout(() => input.focus(), 0); else input.blur();
+    if (want) { unread = 0; badge(); setTimeout(() => input.focus(), 0); } else input.blur();
   }
+  let booted = false;
 
   // ---------- quad ----------
   const LIMIT = 5, BASE = 2;           // engagement ceiling and normal agent rate (req/s)
@@ -765,14 +816,97 @@ setTimeout(tick, 1200);
     if (e.key === '`' || e.key === '~') { e.preventDefault(); open(); }
   });
 
+  window.vgCmds = cmds; window.vgExec = exec;
+  window.vgOpenConsole = (prefill) => { open(true); if (prefill !== undefined) { input.value = prefill; setTimeout(() => { input.focus(); input.setSelectionRange(prefill.length, prefill.length); }, 0); } };
   line('spall console · type help', 'sys');
   line('agent T-3: session fixation confirmed with second account, candidate proposed', 'agent');
   line('oob: late DNS callback on a7f3.oast.example.net (exchange 01JD8N7A…E02, 41 min after send)', 'sys');
 
+  booted = true;
+  // a late event arriving while the console is closed: shows the unread count
+  setTimeout(() => line('oob: HTTP callback on c19e.oast.example.net from 10.20.4.17 (exchange 01JD8Q41…A10)', 'sys'), 6000);
   // ?console=1 and ?quad=1 for screenshots
   const q = new URLSearchParams(location.search);
   if (q.get('console') === '1') { open(true); if (q.get('demo') === '1') ['help', 'quad 120'].forEach(exec); }
   if (q.get('quad') === '1' && q.get('demo') !== '1') startQuad(120);
+})();
+
+// ---- command palette (Ctrl/Cmd+K) and shortcut sheet (?) ----
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const isMac = /Mac|iPhone|iPad/.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '');
+  const MOD = isMac ? '⌘' : 'Ctrl';
+  document.querySelectorAll('.modk').forEach(k => k.textContent = isMac ? '⌘K' : 'Ctrl K');
+
+  const pal = $('palette'), pin = $('palInput'), plist = $('palList');
+  const view = document.body.dataset.view;
+  const items = [
+    { grp: 'view', label: 'Go to Traffic', hint: '2', run: () => location.href = 'spall-console.html' },
+    { grp: 'view', label: 'Go to Tasks', hint: '4', run: () => location.href = 'spall-tasks.html' },
+    { grp: 'view', label: 'Go to Findings', hint: '5', run: () => location.href = 'spall-findings.html' },
+    { grp: 'agent', label: 'Quad damage (2 min)', hint: 'quad', run: () => window.vgExec('quad 120') },
+    { grp: 'agent', label: 'Halt all agent tasks', hint: 'Shift Esc', run: () => window.vgExec('halt') },
+    { grp: 'agent', label: 'Resume agent tasks', hint: 'resume', run: () => window.vgExec('resume') },
+    { grp: 'agent', label: 'List tasks', hint: 'tasks', run: () => { window.vgOpenConsole(); window.vgExec('tasks'); } },
+    { grp: 'traffic', label: 'Replay exchange…', hint: 'replay <id>', run: () => window.vgOpenConsole('replay ') },
+    { grp: 'app', label: 'Open console', hint: '`', run: () => window.vgOpenConsole() },
+    { grp: 'app', label: 'Toggle light / dark', hint: 't', run: () => document.querySelector(`[data-mode="${document.documentElement.getAttribute('data-theme')?.endsWith('-light') ? 'dark' : 'light'}"]`).click() },
+    { grp: 'app', label: 'Theme: Blued', hint: 'theme blued', run: () => window.vgExec('theme blued') },
+    { grp: 'app', label: 'Theme: Rust', hint: 'theme rust', run: () => window.vgExec('theme rust') },
+    { grp: 'app', label: 'Keyboard shortcuts', hint: '?', run: () => openKeys(true) },
+  ];
+  let shown = [], sel = 0;
+  const score = (q, s) => { q = q.toLowerCase(); s = s.toLowerCase(); let i = 0; for (const ch of s) if (ch === q[i]) i++; return i === q.length; };
+  function render() {
+    const q = pin.value.trim();
+    shown = items.filter(it => !q || score(q, it.label + ' ' + it.hint + ' ' + it.grp));
+    sel = Math.min(sel, Math.max(0, shown.length - 1));
+    plist.textContent = '';
+    if (!shown.length) { const li = document.createElement('li'); li.className = 'none'; li.textContent = 'No match. The console takes any command: press `'; plist.appendChild(li); return; }
+    shown.forEach((it, i) => {
+      const li = document.createElement('li'); li.className = i === sel ? 'on' : ''; li.setAttribute('role', 'option');
+      const g = document.createElement('span'); g.className = 'grp'; g.textContent = it.grp;
+      const l = document.createElement('span'); l.textContent = it.label;
+      const h = document.createElement('span'); h.className = 'hint'; h.textContent = it.hint;
+      li.append(g, l, h); li.onmouseenter = () => { sel = i; mark(); }; li.onclick = () => go(i);
+      plist.appendChild(li);
+    });
+  }
+  const mark = () => [...plist.children].forEach((li, i) => li.classList.toggle('on', i === sel));
+  function openPal(on) { pal.hidden = !on; if (on) { pin.value = ''; sel = 0; render(); setTimeout(() => pin.focus(), 0); } }
+  function go(i) { const it = shown[i]; openPal(false); if (it) it.run(); }
+  pin.addEventListener('input', () => { sel = 0; render(); });
+  pin.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { sel = Math.min(shown.length - 1, sel + 1); mark(); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { sel = Math.max(0, sel - 1); mark(); e.preventDefault(); }
+    else if (e.key === 'Enter') { go(sel); }
+    else if (e.key === 'Escape') { openPal(false); }
+  });
+  pal.addEventListener('mousedown', e => { if (e.target === pal) openPal(false); });
+
+  // shortcut sheet, with the right modifier for this platform
+  const keys = $('keys');
+  const global = [[`${MOD} K`, 'Command palette'], ['`', 'Console'], ['?', 'This sheet'], ['1 – 5', 'Switch view'], ['t', 'Light / dark'], ['Shift Esc', 'Halt all agent tasks']];
+  const perView = { traffic: [['/', 'Filter'], ['j  k', 'Next / previous row'], ['⏎', 'Replay'], ['f', 'Flag candidate'], ['a', 'Task agent'], ['x', 'Hex view (binary)']],
+                    tasks: [['n', 'New task'], ['j  k', 'Next / previous task']],
+                    findings: [['j  k', 'Next / previous'], ['c', 'Confirm'], ['r', 'Reject (needs reason)'], ['d', 'Duplicate (needs reason)'], ['e', 'Export flux']] };
+  function fill(dl, rows) { dl.textContent = ''; rows.forEach(([k, d]) => { const dt = document.createElement('dt'); k.split(/\s+/).forEach(p => { const kb = document.createElement('kbd'); kb.textContent = p; dt.append(kb, ' '); }); const dd = document.createElement('dd'); dd.textContent = d; dl.append(dt, dd); }); }
+  fill($('keysGlobal'), global); fill($('keysView'), perView[view] || []);
+  function openKeys(on) { keys.hidden = !on; }
+  keys.addEventListener('mousedown', e => { if (e.target === keys) openKeys(false); });
+
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {
+      e.preventDefault(); e.stopPropagation(); openPal(pal.hidden); return;   // keep Ctrl+K from reaching the browser
+    }
+    if (e.key === 'Escape' && !keys.hidden) { openKeys(false); return; }
+    if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+    if (e.key === '?') { e.preventDefault(); openKeys(keys.hidden); }
+  }, true);
+
+  const q = new URLSearchParams(location.search);
+  if (q.get('palette') === '1') openPal(true);
+  if (q.get('keys') === '1') openKeys(true);
 })();
 
 
