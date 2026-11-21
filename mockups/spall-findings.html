@@ -733,7 +733,7 @@ select(0);
     line(`quad ${why}. back to ${BASE} req/s.`, why === 'ended by e-stop' ? 'stop' : 'sys');
     const secs = Math.round((Date.now() - quadStart) / 1000);
     line(`── QUAD SCORECARD ─ ${secs}s · ${quadReqs} requests · ~${(quadReqs * 1900 / 1000).toFixed(1)}k agent tokens · 1 candidate`, 'quad');
-    line('quad card copied for bragging (redacted: no hosts, paths or payloads)', 'sys');
+    line('quad card copied (redacted: no hosts, paths or payloads)', 'sys');
   }
   window.addEventListener('vg-halted', e => { if (e.detail) endQuad('ended by e-stop'); });
 
