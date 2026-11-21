@@ -56,7 +56,7 @@ The spall UX they illustrate is specified in spall's `docs/ux.md`.
 ## Next
 
 1. Emit a Rust/TS constants file from `tokens.json` alongside the CSS.
-2. Finding severity colors (with spall M3), distinct from HTTP status.
+2. Finding severity colors (with spall M4), distinct from HTTP status.
 3. CI: run `build/tokens.py --check` and verify generated files are
    up to date.
 4. Publish as an npm package when a second tool consumes it.

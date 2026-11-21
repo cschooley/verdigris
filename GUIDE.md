@@ -51,7 +51,7 @@ Set the attribute on `<html>`. Rules that hold in every theme:
 | Boost / quad | `--vg-boost`, `--vg-boost-glow` | A time-boxed burst mode is active (quad). Screen-edge glow, countdown chip, meter. Nothing else |
 | HTTP status class | `--vg-status-*` | Status code text in traffic views |
 | HTTP method | `--vg-method-*` | Method label (808-style category color) |
-| Severity | TBD (spall M3) | Do not reuse status colors |
+| Severity | TBD (spall M4) | Do not reuse status colors |
 
 Attribution uses glyphs, not color: `◆ agent`, `● you`, `◇ scurf`. Every agent-originated exchange, candidate and message carries the ◆.
 
