@@ -1,6 +1,6 @@
 # verdigris
 
-The design system for the cschooley security toolkit: spall, Kudzu, scurf, taphttp, flux.
+The design system for Kudzu: spall, scurf, taphttp, flux and the Kudzu platform.
 
 Rust-dark (or blued, or light), verdigris-live. Built for eight-hour sessions and for looking like you know exactly what you're doing.
 
@@ -28,7 +28,7 @@ python3 build/mockups.py    # rebuild self-contained mockups
 
 ## License
 
-TBD. Intended: tokens and code under a permissive license (Apache-2.0, matching the suite), with the toolkit names and tool icons reserved as marks. Apache-2.0 does not grant trademark rights.
+TBD. Intended: tokens and code under a permissive license (Apache-2.0, matching the other Kudzu tools), with Kudzu, the tool names and tool icons reserved as marks. Apache-2.0 does not grant trademark rights.
 
 IBM Plex fonts are under the SIL Open Font License.
 

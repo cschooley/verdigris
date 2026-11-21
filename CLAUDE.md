@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project
 
-verdigris is the design system for the cschooley security toolkit.
+verdigris is the design system for Kudzu.
 Tools consume it; it knows nothing about any tool's internals.
 
 `GUIDE.md` is the source of truth for design decisions. `tokens/tokens.json`

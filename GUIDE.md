@@ -1,6 +1,6 @@
 # verdigris: design guide
 
-The design system for the cschooley security toolkit (spall, Kudzu, scurf, taphttp, flux, sarifview).
+The design system for Kudzu: the tools (spall, scurf, taphttp, flux, sarifview) and the Kudzu platform.
 
 ## The feeling
 
@@ -16,7 +16,7 @@ Two halves, both required:
 1. **Dark, warm, not black.** Backgrounds are oxidized iron (`--vg-bg-base`), never `#000`. Neutrals are rust-tinted, never cold blue-grey.
 2. **Quiet structure, loud data.** Borders and chrome sit near the background. Full-brightness text is reserved for content: URLs, codes, values.
 3. **Color is information.** Most of the screen is neutral. A color appears only when it means something, and it means the same thing in every tool.
-4. **One signature.** Verdigris (`--vg-accent-verdigris`) means *live / active / connected* and nothing else. The pulsing verdigris dot on a live stream is the identity of the suite. Never use it for decoration, links, or success states.
+4. **One signature.** Verdigris (`--vg-accent-verdigris`) means *live / active / connected* and nothing else. The pulsing verdigris dot on a live stream is the identity of Kudzu. Never use it for decoration, links, or success states.
 5. **Precision you can feel.** Monospace for data, tabular figures, 1px rules, strict 4px-based spacing, 2px radii. Hardware edges, not bubbles.
 6. **Speed is a feature.** Streams over spinners. Keyboard first. Nothing animates longer than `--vg-motion-base` except the live pulse.
 7. **Terse copy.** No exclamation points, no cheerful empty states, no "Oops!". Say what is true and what to do: `No traffic. Point a client at 127.0.0.1:8080.`
